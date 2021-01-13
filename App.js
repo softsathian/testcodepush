@@ -14,6 +14,7 @@ import {
   View,
   Text,
   StatusBar,
+  Button
 } from 'react-native';
 
 import {
@@ -24,7 +25,31 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-const App: () => React$Node = () => {
+import CodePush from 'react-native-code-push';
+
+type Props = {}
+class App extends React.Component<Props> {
+
+  constructor(props) {
+    super(props);
+    this.state = { logs:[] };
+  }
+
+  codepushsync() {
+    this.setState({logs: ['Started at ' + new Date().getTime()]}); 
+    CodePush.sync({
+      updateDialog:true,
+      installMode: CodePush.InstallMode.IMMEDIATE
+    }, (status) => {
+      for (var key in CodePush.SyncStatus) {
+        if (status === CodePush.SyncStatus[key]) {
+          this.setState(prevState => ({logs: [...prevState.logs, key.replace(/_/g,' ')]}));
+          break;
+        }
+      }
+    });
+  }
+  render() {
   return (
     <>
       <StatusBar barStyle="dark-content" />
@@ -40,6 +65,9 @@ const App: () => React$Node = () => {
           )}
           <View style={styles.body}>
             <View style={styles.sectionContainer}>
+            <Button title="Code Push" onPress={() => this.codepushsync()}></Button>
+             
+             <Text>{JSON.stringify(this.state.logs)}</Text>
               <Text style={styles.sectionTitle}>Step One</Text>
               <Text style={styles.sectionDescription}>
                 Edit <Text style={styles.highlight}>App.js</Text> to change this
@@ -70,6 +98,7 @@ const App: () => React$Node = () => {
       </SafeAreaView>
     </>
   );
+          }
 };
 
 const styles = StyleSheet.create({
