@@ -65,6 +65,7 @@ class App extends React.Component<Props> {
           )}
           <View style={styles.body}>
             <View style={styles.sectionContainer}>
+            <Text>Codpush text is synced.</Text>
             <Button title="Code Push" onPress={() => this.codepushsync()}></Button>
              
              <Text>{JSON.stringify(this.state.logs)}</Text>
